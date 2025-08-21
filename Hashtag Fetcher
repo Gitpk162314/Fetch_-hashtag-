@@ -1,0 +1,33 @@
+# Fetch_-hashtag-
+import requests
+
+# --- Twitter API credentials ---
+BEARER_TOKEN = 'YOUR_TWITTER_BEARER_TOKEN'
+
+# --- WOEID (Where on Earth ID) for region ---
+# Use 1 for worldwide trends, or find your country's WOEID
+WOEID = 1  # Worldwide
+
+def get_trending_hashtags(woeid=1):
+    url = f"https://api.twitter.com/1.1/trends/place.json?id={woeid}"
+    headers = {
+        "Authorization": f"Bearer {BEARER_TOKEN}"
+    }
+
+    response = requests.get(url, headers=headers)
+
+    if response.status_code != 200:
+        print("❌ Failed to fetch trends:", response.status_code, response.text)
+        return []
+
+    trends = response.json()[0]['trends']
+    hashtags = [trend['name'] for trend in trends if trend['name'].startswith('#')]
+    
+    return hashtags
+
+# --- Main ---
+if __name__ == "__main__":
+    hashtags = get_trending_hashtags(WOEID)
+    print("🔥 Trending Hashtags:")
+    for tag in hashtags:
+        print(tag)
